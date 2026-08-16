@@ -39,17 +39,17 @@ function onYouTubeIframeAPIReady() {
             fs: 0,
             rel: 0,
             playsinline: 1,
-            loop: 1,
-            playlist: window.HCRP_VIDEO_ID
+           
         },
 
         events: {
             onReady: function(event) {
                 ready = true;
 
-                event.target.mute();
-                event.target.setVolume(Number(volume.value));
-                event.target.playVideo();
+               event.target.mute();
+               event.target.setVolume(Number(volume.value));
+               event.target.loadVideoById(window.HCRP_VIDEO_ID);
+               event.target.playVideo();
 
                 muteIcon.textContent = '🔇';
                 playIcon.textContent = '❚❚';

@@ -8,9 +8,7 @@
 </head>
 <body>
   <div id="video-shell">
-    <video id="player" autoplay loop muted playsinline>
-    <source src="loadingvideo.mp4" type="video/mp4">
-</video>
+    <div id="player"></div>
     <div class="video-dim"></div>
   </div>
 
@@ -49,6 +47,13 @@
     </section>
   </main>
 
-   <script src="script.js"></script>
+  <div id="player"></div>
+
+<script>
+    window.HCRP_VIDEO_ID = "x2TsZeqmh4o";
+</script>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="script.js"></script>
 </body>
 </html>

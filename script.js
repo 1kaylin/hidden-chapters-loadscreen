@@ -47,7 +47,7 @@ function onYouTubeIframeAPIReady() {
             onReady: function(event) {
                 ready = true;
 
-                event.target.setVolume(Number(volume.value));
+                event.target.setVolume(Number(45);
                 event.target.unMute();
                 event.target.playVideo();
 

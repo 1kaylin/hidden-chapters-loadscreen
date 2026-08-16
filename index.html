@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hidden Chapters RP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="video-shell">
+    <video id="player" autoplay loop muted playsinline>
+    <source src="loadingvideo.mp4" type="video/mp4">
+</video>
+    <div class="video-dim"></div>
+  </div>
+
+  <main class="hud">
+    <section class="brand">
+      <img src="logo.png" class="logo" alt="Hidden Chapters RP">
+      <div class="copy">
+        <div class="eyebrow">WELCOME TO</div>
+        <h1>HIDDEN CHAPTERS <span>RP</span></h1>
+        <div class="tagline">Every Story Has a Hidden Chapter</div>
+      </div>
+    </section>
+
+    <section class="bottom-panel">
+      <div class="loading">
+        <div class="loading-row">
+          <span id="loadingText">Entering the city...</span>
+          <span id="loadingPercent">0%</span>
+        </div>
+        <div class="track"><div id="progressBar" class="fill"></div></div>
+        <div id="tip" class="tip">Loading your next chapter...</div>
+      </div>
+
+      <div class="media-card">
+        <button id="playPause" class="control" title="Pause / Play"><span id="playIcon">❚❚</span></button>
+        <button id="muteButton" class="control" title="Mute / Unmute"><span id="muteIcon">🔇</span></button>
+        <div class="volume-wrap">
+          <label for="volume">VOLUME</label>
+          <input id="volume" type="range" min="0" max="100" value="45">
+        </div>
+        <div class="now-playing">
+          <span class="small">NOW PLAYING</span>
+          <span class="title">Hidden Chapters RP Loading Music</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+   <script src="script.js"></script>
+</body>
+</html>

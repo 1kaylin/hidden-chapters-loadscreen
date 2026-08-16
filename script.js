@@ -1,41 +1,66 @@
 
-let player=null, ready=false, lastVolume=45;
-const playPause=document.getElementById('playPause');
-const playIcon=document.getElementById('playIcon');
-const muteButton=document.getElementById('muteButton');
-const muteIcon=document.getElementById('muteIcon');
-const volume=document.getElementById('volume');
-const progressBar=document.getElementById('progressBar');
-const loadingPercent=document.getElementById('loadingPercent');
-const loadingText=document.getElementById('loadingText');
-const tip=document.getElementById('tip');
+let player = null;
+let ready = false;
+let lastVolume = 45;
 
-const tips=[
-  'Every story has a hidden chapter.',
-  'Create a character with a story worth remembering.',
-  'Respect the roleplay. Build the story.',
-  'Luxury is a lifestyle. Reputation is earned.',
-  'Your next chapter begins here.'
+const playPause = document.getElementById('playPause');
+const playIcon = document.getElementById('playIcon');
+const muteButton = document.getElementById('muteButton');
+const muteIcon = document.getElementById('muteIcon');
+const volume = document.getElementById('volume');
+const progressBar = document.getElementById('progressBar');
+const loadingPercent = document.getElementById('loadingPercent');
+const loadingText = document.getElementById('loadingText');
+const tip = document.getElementById('tip');
+
+const tips = [
+    'Every story has a hidden chapter.',
+    'Create a character with a story worth remembering.',
+    'Respect the roleplay. Build the story.',
+    'Luxury is a lifestyle. Reputation is earned.',
+    'Your next chapter begins here.'
 ];
-let tipIndex=0;
-setInterval(()=>{tipIndex=(tipIndex+1)%tips.length;tip.textContent=tips[tipIndex]},6500);
 
-function onYouTubeIframeAPIReady(){
-const player = document.getElementById('player');
-ready = true;
+let tipIndex = 0;
 
-player.volume = Number(volume.value) / 100;
-player.muted = true;
-player.play();
+setInterval(() => {
+    tipIndex = (tipIndex + 1) % tips.length;
+    tip.textContent = tips[tipIndex];
+}, 6500);
 
-muteIcon.textContent = '🔇';
-playIcon.textContent = '❚❚';
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        videoId: window.HCRP_VIDEO_ID,
+
+        playerVars: {
+            autoplay: 1,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            rel: 0,
+            playsinline: 1,
+            loop: 1,
+            playlist: window.HCRP_VIDEO_ID
+        },
+
+        events: {
+            onReady: function(event) {
+                ready = true;
+
+                event.target.mute();
+                event.target.setVolume(Number(volume.value));
+                event.target.playVideo();
+
+                muteIcon.textContent = '🔇';
+                playIcon.textContent = '❚❚';
             },
 
             onStateChange: function(event) {
                 if (event.data === YT.PlayerState.PLAYING) {
                     playIcon.textContent = '❚❚';
-                } else if (event.data === YT.PlayerState.PAUSED) {
+                }
+
+                if (event.data === YT.PlayerState.PAUSED) {
                     playIcon.textContent = '▶';
                 }
             },
@@ -46,41 +71,76 @@ playIcon.textContent = '❚❚';
         }
     });
 }
-playPause.addEventListener('click', () => {
-    if (player.paused) {
-        player.play();
-        playIcon.textContent = '❚❚';
-    } else {
-        player.pause();
+
+playPause.addEventListener('click', function() {
+    if (!ready) return;
+
+    if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+        player.pauseVideo();
         playIcon.textContent = '▶';
-    }
-});
-muteButton.addEventListener('click', () => {
-    player.muted = !player.muted;
-
-    if (player.muted) {
-        muteIcon.textContent = '🔇';
     } else {
-        muteIcon.textContent = '🔊';
+        player.playVideo();
+        playIcon.textContent = '❚❚';
     }
 });
-volume.addEventListener('input', (e) => {
-    const value = Number(e.target.value);
 
-    player.volume = value / 100;
+muteButton.addEventListener('click', function() {
+    if (!ready) return;
+
+    if (player.isMuted()) {
+        player.unMute();
+
+        if (Number(volume.value) === 0) {
+            volume.value = lastVolume;
+            player.setVolume(lastVolume);
+        }
+
+        muteIcon.textContent = '🔊';
+    } else {
+        player.mute();
+        muteIcon.textContent = '🔇';
+    }
+});
+
+volume.addEventListener('input', function(event) {
+    if (!ready) return;
+
+    const value = Number(event.target.value);
+
+    player.setVolume(value);
 
     if (value > 0) {
-        player.muted = false;
+        lastVolume = value;
+        player.unMute();
         muteIcon.textContent = '🔊';
     } else {
-        player.muted = true;
+        player.mute();
         muteIcon.textContent = '🔇';
     }
 });
-window.addEventListener('message',event=>{
-  if(!event.data||event.data.eventName!=='loadProgress')return;
-  const f=Math.max(0,Math.min(1,Number(event.data.loadFraction)||0));
-  const p=Math.round(f*100);
-  progressBar.style.width=p+'%'; loadingPercent.textContent=p+'%';
-  loadingText.textContent=p<20?'Opening Hidden Chapters...':p<55?'Loading the city...':p<85?'Preparing your chapter...':p<100?'Almost ready...':'Welcome to Hidden Chapters RP';
+
+window.addEventListener('message', function(event) {
+    if (!event.data || event.data.eventName !== 'loadProgress') return;
+
+    const fraction = Math.max(
+        0,
+        Math.min(1, Number(event.data.loadFraction) || 0)
+    );
+
+    const percent = Math.round(fraction * 100);
+
+    progressBar.style.width = percent + '%';
+    loadingPercent.textContent = percent + '%';
+
+    if (percent < 20) {
+        loadingText.textContent = 'Opening Hidden Chapters...';
+    } else if (percent < 55) {
+        loadingText.textContent = 'Loading the city...';
+    } else if (percent < 85) {
+        loadingText.textContent = 'Preparing your chapter...';
+    } else if (percent < 100) {
+        loadingText.textContent = 'Almost ready...';
+    } else {
+        loadingText.textContent = 'Welcome to Hidden Chapters RP';
+    }
 });
